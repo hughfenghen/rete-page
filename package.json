@@ -1,0 +1,22 @@
+{
+  "dependencies": {
+    "rete": "^1.0.0-beta.5",
+    "rete-connection-plugin": "^0.2.4",
+    "rete-context-menu-plugin": "^0.2.4",
+    "rete-task-plugin": "^0.1.7",
+    "rete-vue-render-plugin": "^0.2.4"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "babel-loader": "^8.0.4",
+    "source-map-loader": "^0.2.4",
+    "webpack": "^4.24.0",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.10"
+  },
+  "scripts": {
+    "dev": "webpack-dev-server --mode development --inline",
+    "build": "webpack --mode production"
+  }
+}

@@ -38,7 +38,7 @@ editor.use(TaskPlugin);
 
 (async () => {
   const coms = {
-    numComp: new NumComponent(),
+    // numComp: new NumComponent(),
     textComp: new TextComp(),
     inputComp: new InputComp(),
   }
@@ -48,20 +48,21 @@ editor.use(TaskPlugin);
     engine.register(c)
   })
 
-  const n1 = await coms.numComp.createNode('abc')
-  n1.position = [100, 240]
-  editor.addNode(n1)
+  // const n1 = await coms.numComp.createNode('abc')
+  // n1.position = [100, 240]
+  // editor.addNode(n1)
 
   console.log('--------c2')
   const n2 = await coms.inputComp.createNode('#input111')
   n2.position = [200, 340]
   editor.addNode(n2)
 
-  console.log('--------c4')
-  const n4 = await coms.inputComp.createNode('#input222')
-  n4.position = [500, 340]
-  editor.addNode(n4)
+  // console.log('--------c4')
+  // const n4 = await coms.inputComp.createNode('#input222')
+  // n4.position = [500, 340]
+  // editor.addNode(n4)
 
+  console.log('--------c3')
   const n3 = await coms.textComp.createNode('#text')
   n3.position = [300, 440]
   editor.addNode(n3)

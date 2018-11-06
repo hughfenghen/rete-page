@@ -17,66 +17,29 @@ var eventHandlers = {
   }
 };
 
-// class KeydownComp extends Rete.Component {
-//   constructor() {
-//     super("Keydown event");
-//     this.task = {
-//       outputs: ["option", "output"],
-//       init: this.init
-//     };
-//   }
-//
-//   init(task) {
-//     eventHandlers.remove();
-//     eventHandlers.add("keydown", function(e) {
-//       task.run(e.keyCode);
-//       task.reset();
-//     });
-//   }
-//
-//   builder(node) {
-//     node.addOutput(new Rete.Output("", actionSocket));
-//     node.addOutput(new Rete.Output("Key code", dataSocket));
-//   }
-//
-//   worker(node, inputs, data) {
-//     console.log("Keydown event", node.id, data);
-//     return [data];
-//   }
-// }
-
 export class InputComp extends Rete.Component {
   constructor() {
     super("Input");
     this.task = {
-      outputs: {opt: "option", out: "output"},
+      outputs: {inputEvt: 'option'},
       init: this.init,
     };
   }
 
   init(task, node) {
-    console.log(33339999, task, node)
     document.querySelector('#input')
-      .addEventListener('input', function(e) {
+      .oninput = (e) => {
         task.run(e.target.value);
         task.reset();
-      })
+      }
   }
 
   builder(node, ...args) {
-    // document.querySelector(node.data)
-    //   .addEventListener('input', function(e) {
-    //     this.task.run(e.target.value);
-    //     this.task.reset();
-    //   })
-
-    node.addOutput(new Rete.Output('opt', "option", actionSocket));
-    node.addOutput(new Rete.Output('out', "input str", dataSocket));
+    node.addOutput(new Rete.Output('inputEvt', "inputEvt", dataSocket));
   }
 
   worker(node, inputs, data) {
-    console.log("input event", data);
-    return {out: data}
+    console.log('user input:', data)
   }
 }
 
@@ -89,12 +52,11 @@ export class TextComp extends Rete.Component {
   }
 
   builder(node) {
-    node.addInput(new Rete.Input('opt', "option", actionSocket));
-    node.addInput(new Rete.Input('out111', "input str", dataSocket));
+    node.addInput(new Rete.Input('input', "input", dataSocket));
   }
 
-  worker(node, inputs) {
-    console.log("text", node, inputs);
+  worker(node, inputs, data) {
+    console.log("text receive:", data);
   }
 }
 

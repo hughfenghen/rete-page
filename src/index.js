@@ -5,6 +5,8 @@ import ContextMenuPlugin from "rete-context-menu-plugin";
 import TaskPlugin from 'rete-task-plugin';
 import { TextComp, InputComp } from './components'
 
+import './style.css'
+
 const numSocket = new Rete.Socket("Number value");
 
 class NumComponent extends Rete.Component {
@@ -38,7 +40,6 @@ editor.use(TaskPlugin);
 
 (async () => {
   const coms = {
-    // numComp: new NumComponent(),
     textComp: new TextComp(),
     inputComp: new InputComp(),
   }
@@ -48,19 +49,11 @@ editor.use(TaskPlugin);
     engine.register(c)
   })
 
-  // const n1 = await coms.numComp.createNode('abc')
-  // n1.position = [100, 240]
-  // editor.addNode(n1)
-
   console.log('--------c2')
-  const n2 = await coms.inputComp.createNode('#input111')
+  const n2 = await coms.inputComp.createNode('#input')
   n2.position = [200, 340]
   editor.addNode(n2)
 
-  // console.log('--------c4')
-  // const n4 = await coms.inputComp.createNode('#input222')
-  // n4.position = [500, 340]
-  // editor.addNode(n4)
 
   console.log('--------c3')
   const n3 = await coms.textComp.createNode('#text')

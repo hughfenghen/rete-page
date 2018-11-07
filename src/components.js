@@ -1,21 +1,7 @@
 import Rete from "rete";
 
-var actionSocket = new Rete.Socket("Action");
-var dataSocket = new Rete.Socket("Data");
-
-var eventHandlers = {
-  list: [],
-  remove() {
-    this.list.forEach(([evtName, h]) => {
-      document.removeEventListener(evtName, h);
-    });
-    this.list = [];
-  },
-  add(evtName, h) {
-    document.addEventListener(evtName, h, false);
-    this.list.push([evtName, h]);
-  }
-};
+const actionSocket = new Rete.Socket("Action");
+const dataSocket = new Rete.Socket("Data");
 
 export class InputComp extends Rete.Component {
   constructor() {
@@ -27,7 +13,8 @@ export class InputComp extends Rete.Component {
   }
 
   init(task, node) {
-    document.querySelector('#input')
+    console.log(333, node)
+    document.querySelector(node.data)
       .oninput = (e) => {
         task.run(e.target.value);
         task.reset();
@@ -49,14 +36,22 @@ export class TextComp extends Rete.Component {
     this.task = {
       outputs: {}
     };
+    this.inputObserver = []
   }
 
   builder(node) {
+    console.log(6666, node, this)
     node.addInput(new Rete.Input('input', "input", dataSocket));
+    if (node.data) {
+      this.inputObserver.push((iptData) => {
+        document.querySelector(node.data).innerHTML = iptData
+      })
+    }
   }
 
   worker(node, inputs, data) {
-    console.log("text receive:", data);
+    console.log("text receive:", data, node, this);
+    this.component.inputObserver.forEach(f => f(data))
   }
 }
 

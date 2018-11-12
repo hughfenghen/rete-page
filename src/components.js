@@ -1,133 +1,101 @@
-import Rete from "rete";
+import Rete from 'rete'
 
-const actionSocket = new Rete.Socket("Action");
-const dataSocket = new Rete.Socket("Data");
+const actSocket = new Rete.Socket('Action')
+const dataSocket = new Rete.Socket('Data')
+
+function sleep (ms) {
+  return new Promise((resolve, reject) => {
+    setTimeout(resolve, ms)
+  })
+}
+
+async function ajax () {
+  await sleep(2000)
+  return {
+    code: 200,
+    data: {
+      t: Math.random()
+    }
+  }
+}
 
 export class InputComp extends Rete.Component {
-  constructor() {
-    super("Input");
+  constructor () {
+    super('Input')
     this.task = {
-      outputs: {inputEvt: 'option'},
-      init: this.init,
-    };
+      outputs: { evtAct: 'option', 'out': 'output' },
+      init: this.init
+    }
   }
 
-  init(task, node) {
-    console.log(333, node)
-    document.querySelector(node.data)
-      .oninput = (e) => {
-        task.run(e.target.value);
-        task.reset();
+  init (task, node) {
+    console.log(333, 'input init')
+    document.querySelector('#input')
+      .addEventListener('input', (e) => {
+        task.run(e.target.value)
+        task.reset()
+      })
+  }
+
+  builder (node, ...args) {
+    node.addOutput(new Rete.Output('evtAct', 'option', actSocket))
+    node.addOutput(new Rete.Output('out', 'input str', dataSocket))
+  }
+
+  worker (node, inputs, data) {
+    console.log('------input worker:', inputs, data)
+    return { out: data }
+  }
+}
+
+export class AjaxComp extends Rete.Component {
+  constructor () {
+    super('Ajax')
+    this.task = {
+      outputs: {
+        evtAct: 'option',
+        ajaxData: 'output'
+      },
+      init (task) {
+        console.log(3333, 'ajax init')
       }
+    }
   }
 
-  builder(node, ...args) {
-    node.addOutput(new Rete.Output('inputEvt', "inputEvt", dataSocket));
+  builder (node) {
+    node
+      .addInput(new Rete.Input('evtAct', 'option', actSocket))
+      .addInput(new Rete.Input('inputStr', 'input str', dataSocket))
+      .addOutput(new Rete.Output('evtAct', 'option', actSocket))
+      .addOutput(new Rete.Output('ajaxData', 'ajax data', dataSocket))
   }
 
-  worker(node, inputs, data) {
-    console.log('user input:', data)
+  async worker (node, inputs, data) {
+    console.log('------ajax worker:', inputs, data)
+
+    const rs = await ajax()
+    console.log('------ajax result:', rs)
+    return { ajaxData: rs }
   }
 }
 
 export class TextComp extends Rete.Component {
-  constructor() {
-    super("Text");
+  constructor () {
+    super('Text')
     this.task = {
-      outputs: {}
-    };
-    this.inputObserver = []
-  }
-
-  builder(node) {
-    console.log(6666, node, this)
-    node.addInput(new Rete.Input('input', "input", dataSocket));
-    if (node.data) {
-      this.inputObserver.push((iptData) => {
-        document.querySelector(node.data).innerHTML = iptData
-      })
+      outputs: {},
+      init (task) {
+        console.log(3333, 'text init')
+      }
     }
   }
 
-  worker(node, inputs, data) {
-    console.log("text receive:", data, node, this);
-    this.component.inputObserver.forEach(f => f(data))
-  }
-}
-
-class EnterPressComp extends Rete.Component {
-  constructor() {
-    super("Enter pressed");
-    this.task = {
-      outputs: ["option", "option"]
-    };
+  builder (node) {
+    node.addInput(new Rete.Input('evtAct', 'option', actSocket))
+      .addInput(new Rete.Input('text', 'data', dataSocket))
   }
 
-  builder(node) {
-    node.addInput(new Rete.Input("", actionSocket));
-    node.addInput(new Rete.Input("Key code", dataSocket));
-    node.addOutput(new Rete.Output("Tren", actionSocket));
-    node.addOutput(new Rete.Output("Else", actionSocket));
-  }
-
-  worker(node, inputs) {
-    if (inputs[0][0] == 13) this.closed = [1];
-    else this.closed = [0];
-    console.log("Print", node.id, inputs);
-  }
-}
-
-class MessageControl extends Rete.Control {
-  constructor(emitter, msg) {
-    super();
-    this.emitter = emitter;
-    this.template = '<input :value="msg" @input="change($event)"/>';
-
-    this.scope = {
-      msg,
-      change: this.change.bind(this)
-    };
-  }
-
-  change(e) {
-    this.scope.value = +e.target.value;
-    this.update();
-  }
-
-  update() {
-    this.putData("msg", this.scope.value);
-    this.emitter.trigger("process");
-    this._alight.scan();
-  }
-
-  mounted() {
-    this.scope.value = this.getData("msg") || 0;
-    this.update();
-  }
-
-  setValue(val) {
-    this.scope.value = val;
-    this._alight.scan();
-  }
-}
-
-class AlertComp extends Rete.Component {
-  constructor() {
-    super("Alert");
-    this.task = {
-      outputs: []
-    };
-  }
-
-  builder(node) {
-    var ctrl = new MessageControl(this.editor, node.data.msg);
-
-    node.addControl(ctrl);
-    node.addInput(new Rete.Input("ff", actionSocket));
-  }
-
-  worker(node, inputs) {
-    console.log("Alert", node.id, node.data);
-    alert(node.data.msg);
+  async worker (node, inputs, outputs) {
+    console.log('-----text worker:', inputs, outputs)
   }
 }

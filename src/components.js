@@ -29,12 +29,13 @@ export class InputComp extends Rete.Component {
   }
 
   init (task, node) {
-    console.log(333, 'input init')
-    document.querySelector('#input')
-      .addEventListener('input', (e) => {
-        task.run(e.target.value)
-        task.reset()
-      })
+    console.log(333, 'input init', node.data, this)
+    node._run = task.run.bind(task)
+    // document.querySelector('#input-a')
+    //   .addEventListener('input', (e) => {
+    //     task.run(e.target.value)
+    //     task.reset()
+    //   })
   }
 
   builder (node, ...args) {
@@ -64,9 +65,9 @@ export class AjaxComp extends Rete.Component {
 
   builder (node) {
     node
-      .addInput(new Rete.Input('evtAct', 'option', actSocket))
-      .addInput(new Rete.Input('inputStr', 'input str', dataSocket))
-      .addOutput(new Rete.Output('evtAct', 'option', actSocket))
+      // .addInput(new Rete.Input('evtAct', 'option', actSocket, true))
+      .addInput(new Rete.Input('inputStr', 'input str', dataSocket, true))
+      // .addOutput(new Rete.Output('evtAct', 'option', actSocket))
       .addOutput(new Rete.Output('ajaxData', 'ajax data', dataSocket))
   }
 
@@ -84,18 +85,22 @@ export class TextComp extends Rete.Component {
     super('Text')
     this.task = {
       outputs: {},
-      init (task) {
-        console.log(3333, 'text init')
-      }
+      init: this.init
     }
   }
 
+  init (task, node) {
+    console.log(333, 'text init', node.data, this)
+    node._run = task.run
+  }
+
   builder (node) {
-    node.addInput(new Rete.Input('evtAct', 'option', actSocket))
+    node.addInput(new Rete.Input('evtAct', 'option', actSocket, true))
       .addInput(new Rete.Input('text', 'data', dataSocket))
   }
 
   async worker (node, inputs, outputs) {
     console.log('-----text worker:', inputs, outputs)
+    document.querySelector(node.data).innerHTML = JSON.stringify(inputs.text[0])
   }
 }

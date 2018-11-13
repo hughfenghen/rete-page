@@ -6,8 +6,6 @@ import TaskPlugin from 'rete-task-plugin'
 import { TextComp, InputComp, AjaxComp } from './components'
 import rpb from './rete-page-bridge'
 
-import './style.css'
-
 const container = document.querySelector('#rete')
 const editor = new Rete.NodeEditor('demo@0.1.0', container)
 const engine = new Rete.Engine('demo@0.1.0')
@@ -49,7 +47,6 @@ editor.use(TaskPlugin) // or engine.use(TaskPlugin)
   setTimeout(() => {
     Array.from(document.querySelectorAll('input'))
       .forEach((it) => {
-        console.log(9999, it.id)
         const emit = rpb.bindPageElement(it.id)
         it.oninput = (evt) => {
           emit(evt.target.value)

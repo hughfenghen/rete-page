@@ -9,14 +9,17 @@ function sleep (ms) {
   })
 }
 
-async function ajax () {
-  await sleep(2000)
-  return {
-    code: 200,
-    data: {
-      t: Math.random()
-    }
-  }
+function ajax () {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        code: 200,
+        data: {
+          t: Math.random()
+        }
+      })
+    }, 2000)
+  })
 }
 
 export class InputComp extends Rete.Component {
@@ -29,13 +32,10 @@ export class InputComp extends Rete.Component {
   }
 
   init (task, node) {
-    console.log(333, 'input init', node.data, this)
-    node._run = task.run.bind(task)
-    // document.querySelector('#input-a')
-    //   .addEventListener('input', (e) => {
-    //     task.run(e.target.value)
-    //     task.reset()
-    //   })
+    node._run = (value) => {
+      node.data.elmValue = value
+      task.run(value, true)
+    }
   }
 
   builder (node, ...args) {
@@ -44,8 +44,8 @@ export class InputComp extends Rete.Component {
   }
 
   worker (node, inputs, data) {
-    console.log('------input worker:', inputs, data)
-    return { out: data }
+    console.log('------input worker:', data)
+    return { out: node.data.elmValue }
   }
 }
 
@@ -56,9 +56,6 @@ export class AjaxComp extends Rete.Component {
       outputs: {
         evtAct: 'option',
         ajaxData: 'output'
-      },
-      init (task) {
-        console.log(3333, 'ajax init')
       }
     }
   }
@@ -67,16 +64,16 @@ export class AjaxComp extends Rete.Component {
     node
       // .addInput(new Rete.Input('evtAct', 'option', actSocket, true))
       .addInput(new Rete.Input('inputStr', 'input str', dataSocket, true))
-      // .addOutput(new Rete.Output('evtAct', 'option', actSocket))
-      .addOutput(new Rete.Output('ajaxData', 'ajax data', dataSocket))
+      // .addOutput(new Rete.Output('evtAct', 'option', actSocket, true))
+      .addOutput(new Rete.Output('ajaxData', 'ajax data', dataSocket, true))
   }
 
   async worker (node, inputs, data) {
     console.log('------ajax worker:', inputs, data)
 
-    const rs = await ajax()
-    console.log('------ajax result:', rs)
-    return { ajaxData: rs }
+    return {
+      ajaxData: ajax().then(({ data }) => data)
+    }
   }
 }
 
@@ -90,7 +87,6 @@ export class TextComp extends Rete.Component {
   }
 
   init (task, node) {
-    console.log(333, 'text init', node.data, this)
     node._run = task.run
   }
 

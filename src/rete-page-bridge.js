@@ -7,7 +7,7 @@ export function init (engine) {
 export function bindPageElement (id) {
   const node = Object.values(reteEngine.data.nodes).find(({ data: { elmId } }) => id === elmId)
   if (!node) throw new Error('找不到对应的node')
-  console.log('node._run', node._run)
+
   return node._run
 }
 

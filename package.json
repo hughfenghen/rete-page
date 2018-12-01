@@ -22,6 +22,6 @@
     "style-loader": "^0.23.1"
   },
   "scripts": {
-    "dev": "parcel index.html"
+    "dev": "parcel index.html --no-cache"
   }
 }

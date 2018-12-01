@@ -3,11 +3,11 @@ import Rete from 'rete'
 const actSocket = new Rete.Socket('Action')
 const dataSocket = new Rete.Socket('Data')
 
-function sleep (ms) {
-  return new Promise((resolve, reject) => {
-    setTimeout(resolve, ms)
-  })
-}
+// function sleep (ms) {
+//   return new Promise((resolve, reject) => {
+//     setTimeout(resolve, ms)
+//   })
+// }
 
 function ajax () {
   return new Promise((resolve) => {
@@ -97,6 +97,6 @@ export class TextComp extends Rete.Component {
 
   async worker (node, inputs, outputs) {
     console.log('-----text worker:', inputs, outputs)
-    document.querySelector(node.data).innerHTML = JSON.stringify(inputs.text[0])
+    document.querySelector(node.data).innerHTML = JSON.stringify(await inputs.text[0])
   }
 }

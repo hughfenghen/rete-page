@@ -5072,8 +5072,8 @@ rete-context-menu-plugin@^0.2.4:
 
 rete-task-plugin@^0.1.7:
   version "0.1.7"
-  resolved "http://registry.npm.taobao.org/rete-task-plugin/download/rete-task-plugin-0.1.7.tgz#bdffcceb57daf5ecba30c04b339fcde7c1e79b55"
-  integrity sha1-vf/M61fa9ey6MMBLM5/N58Hnm1U=
+  resolved "https://registry.yarnpkg.com/rete-task-plugin/-/rete-task-plugin-0.1.7.tgz#bdffcceb57daf5ecba30c04b339fcde7c1e79b55"
+  integrity sha512-cXIVgfS0M6t/w82BqQlBxHLx8JrwQPpOMHC5vqt5HwZwBog0DCMggs0QZcRGqFi3P9aD36pbyCsyw9NkuUpFTw==
 
 rete-vue-render-plugin@^0.2.4:
   version "0.2.4"

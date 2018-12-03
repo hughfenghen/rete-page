@@ -15,6 +15,12 @@
     b
     <input type="text" name="" value="" id="input-b">
     <div id="text"></div>
+    <script type="text/template" id="list-tpl" props="[list, a, b]" event="[detail, delete]">
+      <% list.forEach(function(it) { %>
+        <div @click="emit('detail')">${a}-${b}: ${it.name}</div>
+        <div @click="emit('delete')">${a}-${b}: ${it.name}</div>
+      <% }) %>
+    </script>
     <script src="src/index.js"></script>
 </body>
 

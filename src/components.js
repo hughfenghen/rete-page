@@ -1,4 +1,5 @@
 import Rete from 'rete'
+import { template } from 'lodash'
 
 const actSocket = new Rete.Socket('Action')
 const dataSocket = new Rete.Socket('Data')
@@ -15,7 +16,14 @@ function ajax () {
       resolve({
         code: 200,
         data: {
-          t: Math.random()
+          t: Math.random(),
+          list: [{
+            id: 111,
+            name: 'foo'
+          }, {
+            id: 222,
+            name: 'bar'
+          }]
         }
       })
     }, 2000)
@@ -54,7 +62,7 @@ export class AjaxComp extends Rete.Component {
     super('Ajax')
     this.task = {
       outputs: {
-        evtAct: 'option',
+        // evtAct: 'option',
         ajaxData: 'output'
       }
     }
@@ -97,6 +105,40 @@ export class TextComp extends Rete.Component {
 
   async worker (node, inputs, outputs) {
     console.log('-----text worker:', inputs, outputs)
-    document.querySelector(node.data).innerHTML = JSON.stringify(await inputs.text[0])
+    document.querySelector(`#${node.data}`).innerHTML = await inputs.text[0]
+  }
+}
+
+export class TemplateComp extends Rete.Component {
+  constructor () {
+    super('Template')
+    this.task = {
+      init: this.init,
+      outputs: {
+        // evtAct: 'option',
+        elements: 'output'
+      }
+    }
+  }
+
+  init (task, node) {
+    node._run = task.run
+  }
+
+  builder (node) {
+    node.addInput(new Rete.Input('scope', 'scope', dataSocket))
+      .addOutput(new Rete.Output('elements', 'elements', dataSocket))
+      // .addInput(new Rete.Input('evtAct', 'option', actSocket, true))
+      // .addOutput(new Rete.Output('evtAct', 'option', actSocket, true))
+  }
+
+  async worker (node, inputs, outputs) {
+    console.log('-----template worker:', inputs)
+    const { list } = await inputs.scope[0]
+    // const str = template(document.querySelector(`#${node.data.elmId}`).innerHTML)({ a: 111, b: 222, list })
+    // console.log(333, document.crea)
+    return {
+      elements: template(document.querySelector(`#${node.data.elmId}`).innerHTML)({ a: 111, b: 222, list })
+    }
   }
 }

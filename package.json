@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "lodash": "^4.17.11",
     "rete": "^1.0.0-beta.5",
     "rete-connection-plugin": "^0.2.4",
     "rete-context-menu-plugin": "^0.2.4",
